@@ -1,0 +1,148 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit config — review of QuitCode Workshop 1 homework PRs.
+# Workshop: "Сучасний стан агентної інженерії. Від no-code до AI-розробки".
+# Homework format: vibe-coding a small app with a design system.
+# Place this file in the ROOT of the practice repo.
+
+language: "uk-UA"
+tone_instructions: >
+  Ментор воркшопу QuitCode. Відповідай українською, доброзичливо але вимогливо.
+  Це вайб-кодинг домашка — не вимагай тестів чи правил. Статуси: ✅ зроблено,
+  ⚠️ частково, ❌ пропущено.
+
+early_access: false
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_placeholder: "@coderabbitai summary"
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  changed_files_summary: true
+  sequence_diagrams: false
+
+  auto_review:
+    enabled: true
+    drafts: true
+    auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 0
+    base_branches:
+      - ".*"
+    ignore_title_keywords:
+      - "WIP"
+      - "[skip review]"
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "renovate[bot]"
+      - "github-actions[bot]"
+
+  # ── File filters ──────────────────────────────────────────────
+  path_filters:
+    - "docs/**"
+    - "app/**"
+    - ".cursor/**"
+    - ".claude/**"
+    - "AGENTS.md"
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/coverage/**"
+    - "!**/public/**"
+    - "!*.lock"
+    - "!**/package-lock.json"
+    - "!**/yarn.lock"
+    - "!**/*.min.js"
+    - "!**/*.min.css"
+    - "!**/*.svg"
+
+  # ── Path-specific review instructions ─────────────────────────
+  path_instructions:
+    - path: "app/**"
+      instructions: |
+        Task 1–2 — вайб-закоджений застосунок. Це перша домашка курсу:
+        НЕ вимагай тестів, правил чи AGENTS.md. Перевір по diff:
+        (1) сучасний каркас (Vite або аналог) з командами dev і build;
+        (2) підключена дизайн-система: залежність на кшталт
+        @porsche-design-system/components-react (тоді має бути
+        PorscheDesignSystemProvider і P*-компоненти в JSX) або інша UI-система
+        (MUI, Ant, shadcn) чи власна бібліотека компонентів;
+        (3) застосунок щось осмислене робить: є форма/інтеракція і
+        відображення даних (за замовчуванням Lead Desk: форма заявки + список
+        з бейджами hot/cold), стан у React state/localStorage.
+        Підказуй м'яко: очевидні баги (зламаний стан, битий import) познач,
+        стилістичні дрібниці пропускай. Це статичне рев'ю — do NOT attempt
+        to run build or dev server.
+
+    - path: "docs/vibe-notes.md"
+      instructions: |
+        Task 3 — нотатки вайб-сесії. Перевір: що вийшло/не вийшло з промптів
+        (конкретика), де агент спіткнувся і як його розвернули, РЕАЛЬНІ числа
+        (кількість ітерацій, токени та/або вартість сесії), 2–3 спостереження.
+        Без чисел — ⚠️/❌.
+
+    - path: "docs/ab-experiment.md"
+      instructions: |
+        Task 4 (bonus) — A/B промптів. Перевір: наведено ОБИДВА промпти
+        (базовий і структурований) + порівняння (якість/ітерації/токени) +
+        короткий висновок. Необов'язкове; відсутність не помилка.
+
+  # ── Pre-merge checks (grading) ────────────────────────────────
+  pre_merge_checks:
+    docstrings:
+      mode: "off"
+
+    title:
+      mode: "warning"
+      requirements: >
+        PR title should follow: "WS1: <participant-name>".
+
+    description:
+      mode: "warning"
+
+    custom_checks:
+      - mode: "warning"
+        name: "Task 1 — scaffold + design system"
+        instructions: >
+          Static review of the diff only — do NOT run any commands. Check the
+          PR adds a project under app/ with a package.json that has dev and
+          build scripts, AND a design system is wired up: either
+          @porsche-design-system/components-react (with
+          PorscheDesignSystemProvider used in the app) or another UI design
+          system (MUI, Ant Design, shadcn/ui, or a self-made component
+          library). PASS if both present; FAIL if app/ is missing or no
+          design system is used.
+
+      - mode: "warning"
+        name: "Task 2 — vibe-coded app on DS"
+        instructions: >
+          Static review of the diff only — do NOT attempt to run the build.
+          Check the app implements a small meaningful application built
+          predominantly from design-system components: an input flow (form or
+          controls) plus a data display (list/table/cards) with some logic in
+          React state and/or localStorage. The default idea is "Lead Desk"
+          (lead form + list with hot/cold badges) but ANY app of similar
+          scope passes. FAIL only if the app is an untouched template or has
+          no interactive logic. Do not require tests or rules — this is
+          deliberate vibe-coding homework.
+
+      - mode: "warning"
+        name: "Task 3 — vibe notes + real numbers"
+        instructions: >
+          Check the PR includes docs/vibe-notes.md with: concrete notes on
+          what worked / what did not, where the agent stumbled, REAL numbers
+          (iteration count and token usage and/or session cost), and at least
+          2 takeaways. PASS if present with numbers; FAIL if missing or has
+          no concrete numbers.
+
+      - mode: "warning"
+        name: "Task 4 — prompt A/B (bonus)"
+        instructions: >
+          Optional. If docs/ab-experiment.md exists, check it contains both
+          prompts (basic and structured) and a short comparison/conclusion.
+          Absence is NOT a failure.
+
+chat:
+  auto_reply: true
